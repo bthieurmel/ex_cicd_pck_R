@@ -14,6 +14,7 @@
 - https://www.tidyverse.org/blog/2022/06/actions-2-0-0/
 - https://covr.r-lib.org/
 - https://about.codecov.io/
+- https://docs.codecov.com/docs/adding-the-codecov-token
 
 ## Process
 
