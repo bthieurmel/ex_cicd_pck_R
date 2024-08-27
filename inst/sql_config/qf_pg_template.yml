@@ -1,0 +1,54 @@
+# needed R packages for DB connection. Use comma separation for multiple dependencies like [package1, package2]
+r_packages: [RPostgres]
+
+# connection 
+# Possible to use !expr Sys.getenv("NAME_ENV_VAR")
+connect:
+  drv: !expr RPostgres::Postgres()
+  host: "gaia.quadratic-labs.com"
+  dbname: "u2p_poc"
+  port: 5432
+  user: "u2p_poc_db"
+  password: "Zoinfè_!àç!&mm"
+
+tables:
+  credentials:
+    tablename: creds
+    init: CREATE TABLE {`tablename`} (
+            "user"  varchar(100) PRIMARY KEY,
+            "password"  varchar(256),
+            "start"  date,
+            "expire" date,
+            "admin" boolean,
+            "group" varchar(100),
+            "check" boolean
+        )
+    select: SELECT * FROM {`tablename`} WHERE "user" IN ({user*})
+    update: UPDATE {`tablename`} SET {`name`} = {value} WHERE "user" IN ({udpate_users*})
+    delete: DELETE FROM {`tablename`} WHERE "user" IN ({del_users*})
+  pwd_mngt:
+    tablename: pwd
+    init: CREATE TABLE {`tablename`} (
+            "user"  varchar(100) PRIMARY KEY,
+            "must_change"  boolean,
+            "have_changed"  boolean,
+            "date_change" date,
+            "n_wrong_pwd" smallint
+          )
+    select: SELECT * FROM {`tablename`} WHERE "user" IN ({user*})
+    update: UPDATE {`tablename`} SET {`name`} = {value} WHERE "user" IN ({udpate_users*})
+    delete: DELETE FROM {`tablename`} WHERE "user" IN ({del_users*})
+  logs:
+    tablename: log
+    init: CREATE TABLE {`tablename`} (
+            "id" SERIAL PRIMARY KEY,
+            "user"  varchar(100),
+            "server_connected" timestamp with time zone,
+            "token"  varchar(100),
+            "logout" timestamp with time zone,
+            "status"  varchar(100),
+            "app" varchar(100)
+          )
+    check_token : SELECT * FROM {`tablename`} WHERE "token" IN ({token*})
+    select: SELECT * FROM {`tablename`} WHERE "user" IN ({user*}) AND "server_connected" >= {`date_h_begin`}  AND "server_connected" <= {`date_h_end`}
+    update: UPDATE {`tablename`} SET {`name`} = {value} WHERE "token" IN ({token*})
